@@ -1,6 +1,6 @@
 namespace contents.Models;
 
-public class WelcomeMessage
+public class WelcomeMessages
 {
-    public string Message { get; set; } = "Welcome";
+    public List<string> Messages { get; set; } = new();
 }

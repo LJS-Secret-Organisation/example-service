@@ -8,8 +8,11 @@ namespace contents.Controllers;
 public class WeatherForecastController : ControllerBase
 {
     [HttpGet]
-    public WelcomeMessage Get()
+    public WelcomeMessages Get()
     {
-        return new WelcomeMessage { Message = "Hello.  Welcome to the EF Assessment 'ExampleService' API." };
+        var msgs = new WelcomeMessages();
+        msgs.Messages.Add("Hello.");
+        msgs.Messages.Add("Welcome to the EF Assessment 'ExampleService' API.");
+        return msgs;
     }
 }
