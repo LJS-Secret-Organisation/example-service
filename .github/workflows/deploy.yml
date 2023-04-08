@@ -1,0 +1,69 @@
+name: Example Deployment Workflow
+
+on:
+  push:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+
+  api:
+    name: Release Api
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - id: string
+        uses: ASzc/change-string-case-action@v1
+        with:
+          string: ef-assessment-ExampleService
+
+      - uses: actions/checkout@v2
+
+      #Deploy API to Heroku
+      - name: Deploy Api to Heroku
+        id: deploy1
+        continue-on-error: true
+        uses: akhileshns/heroku-deploy@v3.12.13
+        with:
+          heroku_email: ${{ secrets.HEROKU_EMAIL_ADDRESS }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ steps.string.outputs.lowercase }}
+          usedocker: true
+
+      #Deploy API to Heroku
+      - name: Deploy Api to Heroku - Retry 1
+        if: steps.deploy1.outcome=='failure'
+        id: retry1
+        continue-on-error: true
+        uses: akhileshns/heroku-deploy@v3.12.13
+        with:
+          heroku_email: ${{ secrets.HEROKU_EMAIL_ADDRESS }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ steps.string.outputs.lowercase }}
+          usedocker: true
+
+      #Deploy API to Heroku
+      - name: Deploy Api to Heroku - Retry 2
+        if: steps.retry1.outcome=='failure'
+        id: retry2
+        continue-on-error: true
+        uses: akhileshns/heroku-deploy@v3.12.13
+        with:
+          heroku_email: ${{ secrets.HEROKU_EMAIL_ADDRESS }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ steps.string.outputs.lowercase }}
+          usedocker: true
+
+      #Deploy API to Heroku
+      - name: Deploy Api to Heroku - Final Retry
+        if: steps.retry2.outcome=='failure'
+        uses: akhileshns/heroku-deploy@v3.12.13
+        with:
+          heroku_email: ${{ secrets.HEROKU_EMAIL_ADDRESS }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: ${{ steps.string.outputs.lowercase }}
+          usedocker: true
+
+  
